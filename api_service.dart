@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:5000/api';
+  // Use your Render backend URL
+  static const String baseUrl = 'https://redhope-backend-3.onrender.com/api';
 
   Future<Map<String, dynamic>> registerDonor(Map<String, dynamic> donorData) async {
     try {
@@ -11,6 +12,9 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: json.encode(donorData),
       );
+      
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
       
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return json.decode(response.body);
@@ -32,10 +36,16 @@ class ApiService {
       
       if (params.isNotEmpty) url += '?' + params.join('&');
       
+      print('Request URL: $url');
+      
       final response = await http.get(Uri.parse(url));
       
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data['donors'];
       } else {
         throw Exception('Failed to load donors: ${response.statusCode}');
       }
